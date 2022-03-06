@@ -5,16 +5,22 @@ window.addEventListener("load", () => {
 let cells = [];
 let snakeElements = [];
 let foodElements = [];
-const gridWidth = 50;
-const gridHeight = 50;
+const gridWidth = 25;
+const gridHeight = 25;
 
 let game = {
   score: 0,
+  bestScore: 0,
   checkGameOver: function () {
     if (snake.checkBite() || snake.checkCollision()) {
       clearInterval(interval);
       alert("Game Over");
     }
+  },
+  updateScore: function () {
+    let scoreElement = document.querySelector("#score");
+    console.log(this.score);
+    scoreElement.textContent = `Score: ${this.score}`;
   },
 };
 
@@ -36,7 +42,6 @@ let snake = {
   initialPosition: Math.floor(Math.random() * (grid.width * grid.height)),
   tailPosition: 0,
   headPosition: 0,
-  score: 0,
   direction: "",
 
   create: function () {
@@ -100,9 +105,10 @@ let snake = {
     if (eat) {
       this.grow();
       food.updatePosition();
-      this.score += 1;
-      console.log(this.score);
+      game.score += 1;
+      // console.log(game.score);
     }
+    return eat;
   },
 
   checkBite: function () {
@@ -165,4 +171,5 @@ let interval = setInterval(() => {
   snake.move();
   game.checkGameOver();
   snake.checkFood();
+  game.updateScore();
 }, 200);

@@ -14,8 +14,8 @@
 
 .cell {
   border: 0.1pt solid white;
-  height: 8px;
-  width: 8px;
+  height: 16px;
+  width: 16px;
 }
 
 .snake {
@@ -25,4 +25,21 @@
 .food {
   background-color: red;
   border-radius: 50%;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.scores {
+  border: 1pt black solid;
+}
+
+#informations {
+  display: flex;
+  justify-content: space-between;
+  width: 400px;
 }
