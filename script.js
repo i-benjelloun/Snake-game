@@ -16,7 +16,7 @@ function main(timestamp) {
   let gameOver;
   if (!start || timestamp - start >= game.speed) {
     start = timestamp;
-    document.querySelector("#play-again").classList.add("hidden");
+    document.querySelector("button#play-again").classList.add("hidden");
     snake.move();
     gameOver = game.checkGameOver();
     snake.checkFood();
@@ -30,6 +30,7 @@ let game = {
   score: 0,
   bestScore: 0,
   speed: 200,
+  frame: false,
 
   reset: function () {
     this.score = 0;
@@ -51,7 +52,8 @@ let game = {
     if (snake.checkBite() || snake.checkCollision()) {
       gameOver = true;
       window.cancelAnimationFrame(this.animationFrame);
-      document.querySelector("#play-again").classList.remove("hidden");
+      document.querySelector("button#play-again").classList.remove("hidden");
+      document.querySelector("button#frame").classList.remove("hidden");
       alert("Game Over");
     }
     return gameOver;
@@ -125,29 +127,55 @@ let snake = {
           this.headPosition += 1;
           this.update();
         } else {
-          this.collision = true;
+          if (game.frame) {
+            this.collision = true;
+          } else {
+            this.headPosition -= grid.width - 1;
+            this.update();
+          }
         }
         break;
 
       case "up":
         if (this.headPosition % grid.width !== this.headPosition) {
-          this.headPosition -= gridWidth;
+          this.headPosition -= grid.width;
           this.update();
-        } else this.collision = true;
+        } else {
+          if (game.frame) {
+            this.collision = true;
+          } else {
+            this.headPosition += grid.width * (grid.height - 1);
+            this.update();
+          }
+        }
         break;
 
       case "left":
         if (this.headPosition % grid.width !== 0) {
           this.headPosition -= 1;
           this.update();
-        } else this.collision = true;
+        } else {
+          if (game.frame) {
+            this.collision = true;
+          } else {
+            this.headPosition += grid.width - 1;
+            this.update();
+          }
+        }
         break;
 
       case "down":
         if (this.headPosition < grid.height * grid.width - grid.width) {
           this.headPosition += gridWidth;
           this.update();
-        } else this.collision = true;
+        } else {
+          if (game.frame) {
+            this.collision = true;
+          } else {
+            this.headPosition -= grid.width * (grid.height - 1);
+            this.update();
+          }
+        }
         break;
     }
   },
@@ -165,7 +193,6 @@ let snake = {
         speedCounter = 0;
         if (game.speed <= 20) game.speed = 20;
       }
-      console.log(speedCounter, game.speed);
     }
 
     return eat;
@@ -212,15 +239,19 @@ document.addEventListener("keydown", (event) => {
   switch (event.key) {
     case "ArrowRight":
       if (snake.direction !== "left") snake.direction = "right";
+      document.querySelector("button#frame").classList.add("hidden");
       break;
     case "ArrowUp":
       if (snake.direction !== "down") snake.direction = "up";
+      document.querySelector("button#frame").classList.add("hidden");
       break;
     case "ArrowLeft":
       if (snake.direction !== "right") snake.direction = "left";
+      document.querySelector("button#frame").classList.add("hidden");
       break;
     case "ArrowDown":
       if (snake.direction !== "up") snake.direction = "down";
+      document.querySelector("button#frame").classList.add("hidden");
       break;
   }
   event.preventDefault();
@@ -229,6 +260,16 @@ document.addEventListener("keydown", (event) => {
 document
   .querySelector("#play-again")
   .addEventListener("click", game.reset.bind(game));
+
+document.querySelector("#frame").addEventListener("click", () => {
+  grid.gridElement.classList.toggle("frame");
+
+  if (!grid.gridElement.classList.contains("frame")) {
+    game.frame = false;
+  } else {
+    game.frame = true;
+  }
+});
 
 // Best Score --> DONE
 // new game after game over --> DONE

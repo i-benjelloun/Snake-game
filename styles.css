@@ -7,7 +7,6 @@
 .grid {
   width: 402px;
   height: 402px;
-  border: 1px solid black;
   display: flex;
   flex-wrap: wrap;
 }
@@ -56,4 +55,8 @@ body {
 
 .hidden {
   display: none;
+}
+
+.frame {
+  border: 1px solid black;
 }
