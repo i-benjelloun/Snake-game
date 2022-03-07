@@ -12,7 +12,7 @@ const gridHeight = 25;
 let start = 0;
 let speedCounter = 0;
 
-function f(timestamp) {
+function main(timestamp) {
   let gameOver;
   if (!start || timestamp - start >= game.speed) {
     start = timestamp;
@@ -23,7 +23,7 @@ function f(timestamp) {
     game.updateScore();
     game.updateBestScore();
   }
-  if (!gameOver) window.requestAnimationFrame(f);
+  if (!gameOver) window.requestAnimationFrame(main);
 }
 
 let game = {
@@ -43,7 +43,7 @@ let game = {
   },
 
   start: function () {
-    this.animationFrame = window.requestAnimationFrame(f);
+    this.animationFrame = window.requestAnimationFrame(main);
   },
 
   checkGameOver: function () {
@@ -233,6 +233,6 @@ document
 // Best Score --> DONE
 // new game after game over --> DONE
 // Food generated on snake --> DONE
-// increased speed over time (or score ?)
+// increased speed over score --> DONE
 // Responsivity
 // Design
