@@ -9,6 +9,22 @@ let cells = [];
 let snakeElements = [];
 const gridWidth = 25;
 const gridHeight = 25;
+let start = 0;
+let speedCounter = 0;
+
+function f(timestamp) {
+  let gameOver;
+  if (!start || timestamp - start >= game.speed) {
+    start = timestamp;
+    document.querySelector("#play-again").classList.add("hidden");
+    snake.move();
+    gameOver = game.checkGameOver();
+    snake.checkFood();
+    game.updateScore();
+    game.updateBestScore();
+  }
+  if (!gameOver) window.requestAnimationFrame(f);
+}
 
 let game = {
   score: 0,
@@ -27,22 +43,18 @@ let game = {
   },
 
   start: function () {
-    this.interval = setInterval(() => {
-      document.querySelector("#play-again").classList.add("hidden");
-      snake.move();
-      this.checkGameOver();
-      snake.checkFood();
-      this.updateScore();
-      this.updateBestScore();
-    }, this.speed);
+    this.animationFrame = window.requestAnimationFrame(f);
   },
 
   checkGameOver: function () {
+    let gameOver = false;
     if (snake.checkBite() || snake.checkCollision()) {
-      clearInterval(this.interval);
+      gameOver = true;
+      window.cancelAnimationFrame(this.animationFrame);
       document.querySelector("#play-again").classList.remove("hidden");
       alert("Game Over");
     }
+    return gameOver;
   },
 
   updateScore: function () {
@@ -146,8 +158,16 @@ let snake = {
       this.grow();
       food.updatePosition();
       game.score += 1;
+      speedCounter += 1;
       if (game.score > game.bestScore) game.bestScore += 1;
+      if (game.score % 5 === 0) {
+        game.speed -= 0.2 * game.speed;
+        speedCounter = 0;
+        if (game.speed <= 20) game.speed = 20;
+      }
+      console.log(speedCounter, game.speed);
     }
+
     return eat;
   },
 
@@ -201,9 +221,6 @@ document.addEventListener("keydown", (event) => {
       break;
     case "ArrowDown":
       if (snake.direction !== "up") snake.direction = "down";
-      break;
-    case "s":
-      clearInterval(interval);
       break;
   }
   event.preventDefault();

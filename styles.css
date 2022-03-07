@@ -21,14 +21,15 @@
 }
 
 .cell {
-  border: 0.1pt solid white;
+  /* border: 0.1pt solid white; */
   height: 16px;
   width: 16px;
-  border-radius: 5px;
+  /* border-radius: 5px; */
 }
 
 .grid .cell.snake {
   background-color: black;
+  border-radius: 5px;
 }
 
 .grid .cell.food {
