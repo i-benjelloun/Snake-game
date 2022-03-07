@@ -1,7 +1,7 @@
 window.addEventListener("load", () => {
   grid.set();
   snake.create();
-  food.show();
+  food.updatePosition();
   game.start();
 });
 
@@ -21,7 +21,7 @@ let game = {
     this.updateScore();
     grid.reset();
     snake.create();
-    food.show();
+    food.updatePosition();
     this.start();
   },
 
@@ -167,7 +167,7 @@ let snake = {
 };
 
 let food = {
-  position: Math.floor(Math.random() * (grid.width * grid.height)),
+  position: 0,
 
   show: function () {
     cells[this.position].classList.add("food");
@@ -179,17 +179,13 @@ let food = {
 
   updatePosition: function () {
     this.remove();
-    this.position = Math.floor(Math.random() * (grid.width * grid.height));
+    let freeCells = cells.filter((cell) => !cell.classList.contains("snake"));
+    let freePositions = freeCells.map((e) => cells.indexOf(e));
+    this.position =
+      freePositions[Math.floor(Math.random() * freePositions.length)];
     this.show();
   },
 };
-
-function startGame() {
-  grid.set();
-  snake.create();
-  food.show();
-  game.start();
-}
 
 document.addEventListener("keydown", (event) => {
   switch (event.key) {
@@ -217,6 +213,7 @@ document
   .addEventListener("click", game.reset.bind(game));
 
 // Best Score --> DONE
-// Food generated on snake
 // new game after game over --> DONE
-//incrased speed over time (or score ?)
+// Food generated on snake --> DONE
+// incrased speed over time (or score ?)
+// Responsivity
