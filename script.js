@@ -13,6 +13,7 @@ const gridHeight = 25;
 let game = {
   score: 0,
   bestScore: 0,
+  speed: 200,
 
   reset: function () {
     this.score = 0;
@@ -33,7 +34,7 @@ let game = {
       snake.checkFood();
       this.updateScore();
       this.updateBestScore();
-    }, 200);
+    }, this.speed);
   },
 
   checkGameOver: function () {
@@ -215,5 +216,6 @@ document
 // Best Score --> DONE
 // new game after game over --> DONE
 // Food generated on snake --> DONE
-// incrased speed over time (or score ?)
+// increased speed over time (or score ?)
 // Responsivity
+// Design
