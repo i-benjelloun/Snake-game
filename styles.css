@@ -35,11 +35,15 @@ body {
 }
 
 .scores {
-  border: 1pt black solid;
+  /* border: 1pt black solid; */
 }
 
 #informations {
   display: flex;
   justify-content: space-between;
   width: 400px;
+}
+
+.hidden {
+  display: none;
 }

@@ -1,40 +1,79 @@
 window.addEventListener("load", () => {
-  startGame();
+  grid.set();
+  snake.create();
+  food.show();
+  game.start();
 });
 
 let cells = [];
 let snakeElements = [];
-let foodElements = [];
 const gridWidth = 25;
 const gridHeight = 25;
 
 let game = {
   score: 0,
   bestScore: 0,
+
+  reset: function () {
+    this.score = 0;
+    snakeElements = [];
+    snake.reset();
+    this.updateScore();
+    grid.reset();
+    snake.create();
+    food.show();
+    this.start();
+  },
+
+  start: function () {
+    this.interval = setInterval(() => {
+      document.querySelector("#play-again").classList.add("hidden");
+      snake.move();
+      this.checkGameOver();
+      snake.checkFood();
+      this.updateScore();
+      this.updateBestScore();
+    }, 200);
+  },
+
   checkGameOver: function () {
     if (snake.checkBite() || snake.checkCollision()) {
-      clearInterval(interval);
+      clearInterval(this.interval);
+      document.querySelector("#play-again").classList.remove("hidden");
       alert("Game Over");
     }
   },
+
   updateScore: function () {
     let scoreElement = document.querySelector("#score");
-    console.log(this.score);
     scoreElement.textContent = `Score: ${this.score}`;
+  },
+
+  updateBestScore: function () {
+    let bestScoreElement = document.querySelector("#best-score");
+    bestScoreElement.textContent = `Best score: ${this.bestScore}`;
   },
 };
 
 let grid = {
   height: gridHeight,
   width: gridWidth,
+  gridElement: document.querySelector(".grid"),
+
   set: function () {
-    const gridElement = document.querySelector(".grid");
     for (let i = 0; i < this.width * this.height; i++) {
       let cell = document.createElement("div");
-      gridElement.appendChild(cell);
+      this.gridElement.appendChild(cell);
       cell.classList.add("cell");
       cells.push(cell);
     }
+  },
+
+  reset: function () {
+    cells.forEach((cell) => {
+      cell.classList.remove("snake");
+      cell.classList.remove("food");
+    });
   },
 };
 
@@ -106,7 +145,7 @@ let snake = {
       this.grow();
       food.updatePosition();
       game.score += 1;
-      // console.log(game.score);
+      if (game.score > game.bestScore) game.bestScore += 1;
     }
     return eat;
   },
@@ -119,6 +158,11 @@ let snake = {
 
   checkCollision: function () {
     return this.collision;
+  },
+
+  reset: function () {
+    this.direction = "";
+    this.collision = false;
   },
 };
 
@@ -144,6 +188,7 @@ function startGame() {
   grid.set();
   snake.create();
   food.show();
+  game.start();
 }
 
 document.addEventListener("keydown", (event) => {
@@ -167,9 +212,11 @@ document.addEventListener("keydown", (event) => {
   event.preventDefault();
 });
 
-let interval = setInterval(() => {
-  snake.move();
-  game.checkGameOver();
-  snake.checkFood();
-  game.updateScore();
-}, 200);
+document
+  .querySelector("#play-again")
+  .addEventListener("click", game.reset.bind(game));
+
+// Best Score --> DONE
+// Food generated on snake
+// new game after game over --> DONE
+//incrased speed over time (or score ?)
