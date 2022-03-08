@@ -16,11 +16,96 @@
   <body>
     <div id="informations">
       <div id="score" class="scores">Score : 0</div>
-      <button id="play-again" class="hidden">Play again</button>
-      <button id="frame">frame</button>
       <div id="best-score" class="scores">Best score : 0</div>
     </div>
-    <div class="grid"></div>
+    <div id="grid-container">
+      <div id="mask"></div>
+      <div class="grid blurred"></div>
+      <section class="pop-up" id="general-pop-up">
+        <h1>Snake</h1>
+        <div class="pop-up-buttons">
+          <button class="pop-up-btn" id="play-btn">Play</button>
+          <button class="pop-up-btn" id="options-btn">Options</button>
+        </div>
+      </section>
+      <section class="pop-up hidden" id="options-pop-up">
+        <div class="frame-options">
+          <img id="left-arrow" src="left-arrow.png" alt="left-arrow" />
+          <h2>Frame</h2>
+          <button class="fnf-buttons" id="frame-btn">Frame</button>
+          <button class="fnf-buttons frame-btn-selected" id="no-frame-btn">
+            No frame
+          </button>
+        </div>
+        <div class="speed options">
+          <h2>Speed</h2>
+          <div id="speed-level-slider">
+            <div class="radio-buttons">
+              <input
+                type="radio"
+                name="speed-level"
+                id="1"
+                value="1"
+                required
+              />
+              <input
+                type="radio"
+                name="speed-level"
+                id="2"
+                value="2"
+                required
+              />
+              <input
+                type="radio"
+                name="speed-level"
+                id="3"
+                value="3"
+                required
+              />
+            </div>
+            <div class="radio-labels">
+              <label for="1" speed="low">Low</label>
+              <label for="2" speed="medium">Medium</label>
+              <label for="3" speed="high">High</label>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+    <div id="mobile-cursor">
+      <div></div>
+      <div>
+        <img class="cursor" id="arrow-up" src="cursor-up.png" alt="cursor-up" />
+      </div>
+      <div></div>
+      <div>
+        <img
+          class="cursor"
+          id="arrow-left"
+          src="cursor-left.png"
+          alt="cursor-left"
+        />
+      </div>
+      <div></div>
+      <div>
+        <img
+          class="cursor"
+          id="arrow-right"
+          src="cursor-right.png"
+          alt="cursor-right"
+        />
+      </div>
+      <div></div>
+      <div>
+        <img
+          class="cursor"
+          id="arrow-down"
+          src="cursor-down.png"
+          alt="cursor-down"
+        />
+      </div>
+      <div></div>
+    </div>
     <script src="script.js"></script>
   </body>
 </html>

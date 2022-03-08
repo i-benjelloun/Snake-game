@@ -1,8 +1,5 @@
 window.addEventListener("load", () => {
   grid.set();
-  snake.create();
-  food.updatePosition();
-  game.start();
 });
 
 let cells = [];
@@ -16,7 +13,6 @@ function main(timestamp) {
   let gameOver;
   if (!start || timestamp - start >= game.speed) {
     start = timestamp;
-    document.querySelector("button#play-again").classList.add("hidden");
     snake.changeDirection();
     snake.move();
     gameOver = game.checkGameOver();
@@ -34,6 +30,7 @@ let game = {
   frame: false,
 
   reset: function () {
+    game.setSpeed();
     this.score = 0;
     snakeElements = [];
     snake.reset();
@@ -48,14 +45,34 @@ let game = {
     this.animationFrame = window.requestAnimationFrame(main);
   },
 
+  setSpeed: function () {
+    let speedLevel = document.querySelector(
+      'input[name="speed-level"]:checked'
+    ).value;
+    switch (speedLevel) {
+      case "1":
+        this.speed = 400;
+        break;
+      case "2":
+        this.speed = 200;
+        break;
+      case "3":
+        this.speed = 100;
+        break;
+      default:
+        break;
+    }
+  },
+
   checkGameOver: function () {
     let gameOver = false;
     if (snake.checkBite() || snake.checkCollision()) {
       gameOver = true;
       window.cancelAnimationFrame(this.animationFrame);
-      document.querySelector("button#play-again").classList.remove("hidden");
-      document.querySelector("button#frame").classList.remove("hidden");
-      alert("Game Over");
+      document.querySelector(".pop-up h1").textContent = "Game Over !!!";
+      document.querySelector("#mask").classList.remove("hidden");
+      document.querySelector(".pop-up").classList.remove("hidden");
+      document.querySelector(".grid").classList.add("blurred");
     }
     return gameOver;
   },
@@ -208,7 +225,7 @@ let snake = {
       if (game.score % 5 === 0) {
         game.speed -= 0.2 * game.speed;
         speedCounter = 0;
-        if (game.speed <= 20) game.speed = 20;
+        if (game.speed <= 5) game.speed = 5;
       }
     }
 
@@ -227,6 +244,7 @@ let snake = {
 
   reset: function () {
     this.direction = "";
+    this.nextDirection = "";
     this.collision = false;
   },
 };
@@ -256,39 +274,67 @@ document.addEventListener("keydown", (event) => {
   switch (event.key) {
     case "ArrowRight":
       snake.nextDirection = "right";
-      document.querySelector("button#frame").classList.add("hidden");
       break;
 
     case "ArrowUp":
       snake.nextDirection = "up";
-      document.querySelector("button#frame").classList.add("hidden");
       break;
 
     case "ArrowLeft":
       snake.nextDirection = "left";
-      document.querySelector("button#frame").classList.add("hidden");
       break;
 
     case "ArrowDown":
       snake.nextDirection = "down";
-      document.querySelector("button#frame").classList.add("hidden");
       break;
   }
   event.preventDefault();
 });
 
-document
-  .querySelector("#play-again")
-  .addEventListener("click", game.reset.bind(game));
+document.querySelector("#play-btn").addEventListener("click", () => {
+  game.reset();
+  document.querySelector("#mask").classList.add("hidden");
+  document.querySelector(".pop-up#general-pop-up").classList.add("hidden");
+  document.querySelector(".grid").classList.remove("blurred");
+});
 
-document.querySelector("#frame").addEventListener("click", () => {
-  grid.gridElement.classList.toggle("frame");
+document.querySelector("#options-btn").addEventListener("click", () => {
+  document.querySelector(".pop-up#options-pop-up").classList.remove("hidden");
+});
 
-  if (!grid.gridElement.classList.contains("frame")) {
-    game.frame = false;
-  } else {
-    game.frame = true;
-  }
+document.querySelector("#left-arrow").addEventListener("click", () => {
+  document.querySelector(".pop-up#options-pop-up").classList.add("hidden");
+});
+
+document.querySelector("#frame-btn").addEventListener("click", () => {
+  grid.gridElement.classList.add("frame");
+  document.querySelector("#frame-btn").classList.toggle("frame-btn-selected");
+  document
+    .querySelector("#no-frame-btn")
+    .classList.toggle("frame-btn-selected");
+  game.frame = true;
+});
+
+document.querySelector("#no-frame-btn").addEventListener("click", () => {
+  grid.gridElement.classList.remove("frame");
+  document
+    .querySelector("#no-frame-btn")
+    .classList.toggle("frame-btn-selected");
+  document.querySelector("#frame-btn").classList.toggle("frame-btn-selected");
+  game.frame = false;
+});
+
+document.querySelector("#arrow-left").addEventListener("click", () => {
+  snake.nextDirection = "left";
+});
+document.querySelector("#arrow-right").addEventListener("click", () => {
+  snake.nextDirection = "right";
+});
+document.querySelector("#arrow-up").addEventListener("click", () => {
+  snake.nextDirection = "up";
+});
+document.querySelector("#arrow-down").addEventListener("click", () => {
+  snake.nextDirection = "down";
 });
 
 // Best Score --> DONE
