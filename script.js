@@ -17,6 +17,7 @@ function main(timestamp) {
   if (!start || timestamp - start >= game.speed) {
     start = timestamp;
     document.querySelector("button#play-again").classList.add("hidden");
+    snake.changeDirection();
     snake.move();
     gameOver = game.checkGameOver();
     snake.checkFood();
@@ -97,6 +98,7 @@ let snake = {
   tailPosition: 0,
   headPosition: 0,
   direction: "",
+  nextDirection: "",
 
   create: function () {
     snakeElements.push(cells[this.initialPosition]);
@@ -118,6 +120,21 @@ let snake = {
     snakeElements.shift();
     snakeElements.push(cells[this.headPosition]);
     this.show();
+  },
+
+  changeDirection: function () {
+    if (this.direction !== "left" && this.nextDirection === "right") {
+      this.direction = this.nextDirection;
+    }
+    if (this.direction !== "right" && this.nextDirection === "left") {
+      this.direction = this.nextDirection;
+    }
+    if (this.direction !== "up" && this.nextDirection === "down") {
+      this.direction = this.nextDirection;
+    }
+    if (this.direction !== "down" && this.nextDirection === "up") {
+      this.direction = this.nextDirection;
+    }
   },
 
   move: function () {
@@ -238,19 +255,22 @@ let food = {
 document.addEventListener("keydown", (event) => {
   switch (event.key) {
     case "ArrowRight":
-      if (snake.direction !== "left") snake.direction = "right";
+      snake.nextDirection = "right";
       document.querySelector("button#frame").classList.add("hidden");
       break;
+
     case "ArrowUp":
-      if (snake.direction !== "down") snake.direction = "up";
+      snake.nextDirection = "up";
       document.querySelector("button#frame").classList.add("hidden");
       break;
+
     case "ArrowLeft":
-      if (snake.direction !== "right") snake.direction = "left";
+      snake.nextDirection = "left";
       document.querySelector("button#frame").classList.add("hidden");
       break;
+
     case "ArrowDown":
-      if (snake.direction !== "up") snake.direction = "down";
+      snake.nextDirection = "down";
       document.querySelector("button#frame").classList.add("hidden");
       break;
   }
@@ -275,5 +295,6 @@ document.querySelector("#frame").addEventListener("click", () => {
 // new game after game over --> DONE
 // Food generated on snake --> DONE
 // increased speed over score --> DONE
+// Change direction bug --> DONE
 // Responsivity
 // Design
