@@ -4,11 +4,6 @@
   padding: 0;
 }
 
-html,
-body {
-  height: 100%;
-}
-
 body {
   display: flex;
   flex-direction: column;
@@ -16,45 +11,27 @@ body {
   background-color: #222738;
   font-family: "Poppins", sans-serif;
   color: white;
-  padding-top: 1rem;
-}
-
-.grid {
-  width: 402px;
-  height: 402px;
-  display: flex;
-  flex-wrap: wrap;
-  background-color: #181825;
-}
-
-/* .grid :nth-child(2n) {
-  background-color: rgba(255, 217, 0, 0.3);
-}
-.grid :nth-child(2n + 1) {
-  background-color: rgb(0, 87, 183, 0.3);
-} */
-
-.cell {
-  height: 16px;
-  width: 16px;
-}
-
-.grid .cell.snake {
-  background-color: white;
-  box-shadow: 0px 0px 5px 1px white;
-}
-
-.grid .cell.food {
-  background-color: red;
-  border-radius: 50%;
-  box-shadow: 0px 0px 5px 1px red;
 }
 
 #informations {
   display: flex;
   justify-content: space-between;
-  width: 400px;
-  margin-bottom: 1rem;
+  width: 50vmax;
+  margin: 1rem 0;
+}
+
+#grid-container {
+  position: relative;
+  width: 50vmax;
+  height: 50vmax;
+}
+
+.grid {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  background-color: #181825;
 }
 
 #mask {
@@ -68,17 +45,29 @@ body {
   z-index: 1;
 }
 
-#grid-container {
-  position: relative;
+.cell {
+  height: 4%;
+  width: 4%;
+}
+
+.grid .cell.snake {
+  background-color: white;
+  box-shadow: 0px 0px 5px 1px white;
+}
+
+.grid .cell.food {
+  background-color: red;
+  border-radius: 50%;
+  box-shadow: 0px 0px 5px 1px red;
 }
 
 .pop-up {
   position: absolute;
-  width: 50%;
-  height: 50%;
-  top: 0;
-  left: 0;
-  transform: translate(50%, 50%);
+  width: 70%;
+  height: 70%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   border-radius: 1rem;
   background-color: #fcffff;
   padding: 0.5rem;
@@ -124,6 +113,7 @@ button#play-btn {
   box-shadow: 6px 6px 12px #c5c5c5, -6px -6px 12px #ffffff;
   width: 60%;
   height: 100%;
+  font-size: 1rem;
 }
 
 button#options-btn {
@@ -135,6 +125,7 @@ button#options-btn {
   box-shadow: 6px 6px 12px #c5c5c5, -6px -6px 12px #ffffff;
   width: 30%;
   height: 100%;
+  font-size: 1rem;
 }
 
 .fnf-buttons {
@@ -145,7 +136,7 @@ button#options-btn {
   transition: all 0.3s;
   box-shadow: 6px 6px 12px #c5c5c5, -6px -6px 12px #ffffff;
   width: 40%;
-  height: 40%;
+  height: 60%;
 }
 
 #left-arrow {
@@ -210,29 +201,39 @@ h2 {
 }
 
 #mobile-cursor {
-  position: relative;
-  margin-top: 2rem;
-  width: 300px;
-  height: 5rem;
-  display: flex;
-  flex-wrap: wrap;
-}
-
-#mobile-cursor div {
-  width: 100px;
-  height: 100px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  display: none;
 }
 
 .cursor {
-  filter: invert(70%);
+  filter: invert(100%);
   width: 90%;
 }
 
-@media (min-width: 400px) {
+@media (max-width: 400px) {
+  #informations {
+    display: flex;
+    justify-content: space-between;
+    width: 95vmin;
+    margin-bottom: 1rem;
+  }
+
+  #grid-container {
+    position: relative;
+    width: 95vmin;
+    height: 95vmin;
+  }
+
   #mobile-cursor {
-    display: none;
+    margin-top: 2rem;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    height: 80vmin;
+    width: 80vmin;
+  }
+
+  #mobile-cursor div {
+    width: 30%;
+    height: 30%;
   }
 }

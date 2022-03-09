@@ -324,16 +324,16 @@ document.querySelector("#no-frame-btn").addEventListener("click", () => {
   game.frame = false;
 });
 
-document.querySelector("#arrow-left").addEventListener("click", () => {
+document.querySelector("#arrow-left").addEventListener("touchstart", () => {
   snake.nextDirection = "left";
 });
-document.querySelector("#arrow-right").addEventListener("click", () => {
+document.querySelector("#arrow-right").addEventListener("touchstart", () => {
   snake.nextDirection = "right";
 });
-document.querySelector("#arrow-up").addEventListener("click", () => {
+document.querySelector("#arrow-up").addEventListener("touchstart", () => {
   snake.nextDirection = "up";
 });
-document.querySelector("#arrow-down").addEventListener("click", () => {
+document.querySelector("#arrow-down").addEventListener("touchstart", () => {
   snake.nextDirection = "down";
 });
 
