@@ -16,6 +16,7 @@ body {
 #informations {
   display: flex;
   justify-content: space-between;
+  align-items: baseline;
   width: 50vmax;
   margin: 1rem 0;
 }

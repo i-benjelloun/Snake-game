@@ -68,6 +68,7 @@ let game = {
     let gameOver = false;
     if (snake.checkBite() || snake.checkCollision()) {
       gameOver = true;
+      document.querySelector("#background-music").pause();
       window.cancelAnimationFrame(this.animationFrame);
       document.querySelector(".pop-up h1").textContent = "Game Over !!!";
       document.querySelector("#mask").classList.remove("hidden");
@@ -217,6 +218,8 @@ let snake = {
   checkFood: function () {
     let eat = this.headPosition === food.position;
     if (eat) {
+      // document.querySelector("#eat-sound").play();
+      // console.log(document.querySelector("#eat-sound"));
       this.grow();
       food.updatePosition();
       game.score += 1;
@@ -296,6 +299,7 @@ document.querySelector("#play-btn").addEventListener("click", () => {
   document.querySelector("#mask").classList.add("hidden");
   document.querySelector(".pop-up#general-pop-up").classList.add("hidden");
   document.querySelector(".grid").classList.remove("blurred");
+  document.querySelector("#background-music").play();
 });
 
 document.querySelector("#options-btn").addEventListener("click", () => {
@@ -341,10 +345,27 @@ document.querySelector("#arrow-down").addEventListener("touchstart", () => {
   navigator.vibrate(50);
 });
 
+document.querySelector("#sound-on").addEventListener("click", () => {
+  document.querySelectorAll("audio").forEach((track) => {
+    track.muted = true;
+    document.querySelector("#sound-on").classList.add("hidden");
+    document.querySelector("#sound-off").classList.remove("hidden");
+  });
+});
+
+document.querySelector("#sound-off").addEventListener("click", () => {
+  document.querySelectorAll("audio").forEach((track) => {
+    track.muted = false;
+    document.querySelector("#sound-on").classList.remove("hidden");
+    document.querySelector("#sound-off").classList.add("hidden");
+  });
+});
+
 // Best Score --> DONE
 // new game after game over --> DONE
 // Food generated on snake --> DONE
 // increased speed over score --> DONE
 // Change direction bug --> DONE
-// Responsivity
-// Design
+// Responsivity --> DONE
+// Design --> DONE
+// Music / sound effects -- DONE
