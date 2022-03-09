@@ -326,15 +326,19 @@ document.querySelector("#no-frame-btn").addEventListener("click", () => {
 
 document.querySelector("#arrow-left").addEventListener("touchstart", () => {
   snake.nextDirection = "left";
+  navigator.vibrate(50);
 });
 document.querySelector("#arrow-right").addEventListener("touchstart", () => {
   snake.nextDirection = "right";
+  navigator.vibrate(50);
 });
 document.querySelector("#arrow-up").addEventListener("touchstart", () => {
   snake.nextDirection = "up";
+  navigator.vibrate(50);
 });
 document.querySelector("#arrow-down").addEventListener("touchstart", () => {
   snake.nextDirection = "down";
+  navigator.vibrate(50);
 });
 
 // Best Score --> DONE
