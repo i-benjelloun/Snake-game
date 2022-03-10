@@ -9,20 +9,6 @@ const gridHeight = 25;
 let start = 0;
 let speedCounter = 0;
 
-function main(timestamp) {
-  let gameOver;
-  if (!start || timestamp - start >= game.speed) {
-    start = timestamp;
-    snake.changeDirection();
-    snake.move();
-    gameOver = game.checkGameOver();
-    snake.checkFood();
-    game.updateScore();
-    game.updateBestScore();
-  }
-  if (!gameOver) window.requestAnimationFrame(main);
-}
-
 let game = {
   score: 0,
   bestScore: 0,
@@ -30,22 +16,40 @@ let game = {
   frame: false,
 
   reset: function () {
-    game.setSpeed();
-    this.score = 0;
     snakeElements = [];
     snake.reset();
-    this.updateScore();
+    this.resetScore();
+    this.writeScore();
     grid.reset();
-    snake.create();
-    food.updatePosition();
-    this.start();
+    snake.createNew();
+    snake.show();
+    food.generateNew();
+    food.show();
   },
 
+  //main function where everything happens :)
   start: function () {
+    function main(timestamp) {
+      let gameOver;
+      if (!start || timestamp - start >= game.speed) {
+        start = timestamp;
+        game.setInitialSpeed();
+        snake.changeDirection();
+        snake.move();
+        snake.show();
+        gameOver = game.checkGameOver();
+        snake.checkFood();
+        game.writeScore();
+        game.writeBestScore();
+        food.show();
+      }
+      if (!gameOver) window.requestAnimationFrame(main);
+    }
     this.animationFrame = window.requestAnimationFrame(main);
   },
 
-  setSpeed: function () {
+  // Setting initial excecution rate of the game, the higher the rate, the lower the speed
+  setInitialSpeed: function () {
     let speedLevel = document.querySelector(
       'input[name="speed-level"]:checked'
     ).value;
@@ -64,11 +68,13 @@ let game = {
     }
   },
 
+  // Check if snake collided with frame, or with itself
   checkGameOver: function () {
     let gameOver = false;
     if (snake.checkBite() || snake.checkCollision()) {
       gameOver = true;
       document.querySelector("#background-music").pause();
+      document.querySelector("#background-music").currentTime = 0;
       window.cancelAnimationFrame(this.animationFrame);
       document.querySelector(".pop-up h1").textContent = "Game Over !!!";
       document.querySelector("#mask").classList.remove("hidden");
@@ -78,12 +84,18 @@ let game = {
     return gameOver;
   },
 
-  updateScore: function () {
+  // Write current score on the interface
+  writeScore: function () {
     let scoreElement = document.querySelector("#score");
     scoreElement.textContent = `Score: ${this.score}`;
   },
 
-  updateBestScore: function () {
+  resetScore: function () {
+    this.score = 0;
+  },
+
+  // Write best score on the interface
+  writeBestScore: function () {
     let bestScoreElement = document.querySelector("#best-score");
     bestScoreElement.textContent = `Best score: ${this.bestScore}`;
   },
@@ -92,6 +104,7 @@ let game = {
 let grid = {
   height: gridHeight,
   width: gridWidth,
+  size: gridHeight * gridWidth,
   gridElement: document.querySelector(".grid"),
 
   set: function () {
@@ -118,18 +131,19 @@ let snake = {
   direction: "",
   nextDirection: "",
 
-  create: function () {
+  createNew: function () {
     snakeElements.push(cells[this.initialPosition]);
     this.tailPosition = cells.indexOf(snakeElements[0]);
     this.headPosition = cells.indexOf(snakeElements[snakeElements.length - 1]);
-    snake.show();
   },
 
+  // Display the snake on the screen
   show: function () {
     cells.forEach((element) => element.classList.remove("snake"));
     snakeElements.forEach((element) => element.classList.add("snake"));
   },
 
+  // Add a snake element to the beginning of the snake
   grow: function () {
     snakeElements.unshift(cells[this.tailPosition - 1]);
   },
@@ -137,9 +151,9 @@ let snake = {
   update: function () {
     snakeElements.shift();
     snakeElements.push(cells[this.headPosition]);
-    this.show();
   },
 
+  // Change current direction
   changeDirection: function () {
     if (this.direction !== "left" && this.nextDirection === "right") {
       this.direction = this.nextDirection;
@@ -155,62 +169,79 @@ let snake = {
     }
   },
 
+  moveHorizontal: function (border, increment, noFrameIncrement) {
+    if (this.headPosition % grid.width !== border) {
+      this.headPosition += increment;
+      this.update();
+    } else {
+      if (game.frame) {
+        this.collision = true;
+      } else {
+        this.headPosition += noFrameIncrement;
+        this.update();
+      }
+    }
+  },
+
+  moveVertical: function (row, increment, noFrameIncrement) {
+    if (Math.floor(this.headPosition / grid.width) !== row) {
+      this.headPosition += increment;
+      this.update();
+    } else {
+      if (game.frame) {
+        this.collision = true;
+      } else {
+        this.headPosition += noFrameIncrement;
+        this.update();
+      }
+    }
+  },
+
+  moveRight: function () {
+    const border = grid.width - 1;
+    const increment = 1;
+    const noFrameIncrement = 1 - grid.width;
+    this.moveHorizontal(border, increment, noFrameIncrement);
+  },
+
+  moveLeft: function () {
+    const border = 0;
+    const increment = -1;
+    const noFrameIncrement = grid.width - 1;
+    this.moveHorizontal(border, increment, noFrameIncrement);
+  },
+
+  moveUp: function () {
+    const row = 0;
+    const increment = -grid.width;
+    const noFrameIncrement = grid.width * (grid.height - 1);
+    this.moveVertical(row, increment, noFrameIncrement);
+  },
+
+  moveDown: function () {
+    const row = grid.width - 1;
+    const increment = grid.width;
+    const noFrameIncrement = -grid.width * (grid.height - 1);
+    this.moveVertical(row, increment, noFrameIncrement);
+  },
+
+  // Updating the head postion of the snake
   move: function () {
     switch (this.direction) {
       case "right":
-        if (this.headPosition % grid.width !== grid.width - 1) {
-          this.headPosition += 1;
-          this.update();
-        } else {
-          if (game.frame) {
-            this.collision = true;
-          } else {
-            this.headPosition -= grid.width - 1;
-            this.update();
-          }
-        }
+        this.moveRight();
         break;
 
       case "up":
-        if (this.headPosition % grid.width !== this.headPosition) {
-          this.headPosition -= grid.width;
-          this.update();
-        } else {
-          if (game.frame) {
-            this.collision = true;
-          } else {
-            this.headPosition += grid.width * (grid.height - 1);
-            this.update();
-          }
-        }
+        this.moveUp();
         break;
 
       case "left":
-        if (this.headPosition % grid.width !== 0) {
-          this.headPosition -= 1;
-          this.update();
-        } else {
-          if (game.frame) {
-            this.collision = true;
-          } else {
-            this.headPosition += grid.width - 1;
-            this.update();
-          }
-        }
+        this.moveLeft();
         break;
 
       case "down":
-        if (this.headPosition < grid.height * grid.width - grid.width) {
-          this.headPosition += gridWidth;
-          this.update();
-        } else {
-          if (game.frame) {
-            this.collision = true;
-          } else {
-            this.headPosition -= grid.width * (grid.height - 1);
-            this.update();
-          }
-        }
+        this.moveDown();
         break;
     }
   },
@@ -218,23 +249,21 @@ let snake = {
   checkFood: function () {
     let eat = this.headPosition === food.position;
     if (eat) {
-      // document.querySelector("#eat-sound").play();
-      // console.log(document.querySelector("#eat-sound"));
       this.grow();
-      food.updatePosition();
+      food.generateNew();
       game.score += 1;
       speedCounter += 1;
       if (game.score > game.bestScore) game.bestScore += 1;
       if (game.score % 5 === 0) {
-        game.speed -= 0.2 * game.speed;
         speedCounter = 0;
+        game.speed -= 0.2 * game.speed;
         if (game.speed <= 5) game.speed = 5;
       }
     }
-
     return eat;
   },
 
+  // Check if snake collided with itself
   checkBite: function () {
     let positions = snakeElements.map((e) => cells.indexOf(e));
     let bite = new Set(positions).size !== positions.length;
@@ -263,16 +292,16 @@ let food = {
     cells[this.position].classList.remove("food");
   },
 
-  updatePosition: function () {
+  generateNew: function () {
     this.remove();
     let freeCells = cells.filter((cell) => !cell.classList.contains("snake"));
     let freePositions = freeCells.map((e) => cells.indexOf(e));
     this.position =
       freePositions[Math.floor(Math.random() * freePositions.length)];
-    this.show();
   },
 };
 
+// Move snake with keyboard keys
 document.addEventListener("keydown", (event) => {
   switch (event.key) {
     case "ArrowRight":
@@ -294,40 +323,7 @@ document.addEventListener("keydown", (event) => {
   event.preventDefault();
 });
 
-document.querySelector("#play-btn").addEventListener("click", () => {
-  game.reset();
-  document.querySelector("#mask").classList.add("hidden");
-  document.querySelector(".pop-up#general-pop-up").classList.add("hidden");
-  document.querySelector(".grid").classList.remove("blurred");
-  document.querySelector("#background-music").play();
-});
-
-document.querySelector("#options-btn").addEventListener("click", () => {
-  document.querySelector(".pop-up#options-pop-up").classList.remove("hidden");
-});
-
-document.querySelector("#left-arrow").addEventListener("click", () => {
-  document.querySelector(".pop-up#options-pop-up").classList.add("hidden");
-});
-
-document.querySelector("#frame-btn").addEventListener("click", () => {
-  grid.gridElement.classList.add("frame");
-  document.querySelector("#frame-btn").classList.toggle("frame-btn-selected");
-  document
-    .querySelector("#no-frame-btn")
-    .classList.toggle("frame-btn-selected");
-  game.frame = true;
-});
-
-document.querySelector("#no-frame-btn").addEventListener("click", () => {
-  grid.gridElement.classList.remove("frame");
-  document
-    .querySelector("#no-frame-btn")
-    .classList.toggle("frame-btn-selected");
-  document.querySelector("#frame-btn").classList.toggle("frame-btn-selected");
-  game.frame = false;
-});
-
+// Move snake with screen touch for mobile
 document.querySelector("#arrow-left").addEventListener("touchstart", () => {
   snake.nextDirection = "left";
   navigator.vibrate(50);
@@ -345,6 +341,45 @@ document.querySelector("#arrow-down").addEventListener("touchstart", () => {
   navigator.vibrate(50);
 });
 
+// play game
+document.querySelector("#play-btn").addEventListener("click", () => {
+  document.querySelector("#mask").classList.add("hidden");
+  document.querySelector(".pop-up#general-pop-up").classList.add("hidden");
+  document.querySelector(".grid").classList.remove("blurred");
+  document.querySelector("#background-music").play();
+  game.reset();
+  game.start();
+});
+
+//Display options window
+document.querySelector("#options-btn").addEventListener("click", () => {
+  document.querySelector(".pop-up#options-pop-up").classList.remove("hidden");
+});
+
+//Exit options window
+document.querySelector("#left-arrow").addEventListener("click", () => {
+  document.querySelector(".pop-up#options-pop-up").classList.add("hidden");
+});
+
+//Frame/noFrame button management
+document.querySelector("#frame-btn").addEventListener("click", () => {
+  grid.gridElement.classList.add("frame");
+  document.querySelector("#frame-btn").classList.toggle("frame-btn-selected");
+  document
+    .querySelector("#no-frame-btn")
+    .classList.toggle("frame-btn-selected");
+  game.frame = true;
+});
+document.querySelector("#no-frame-btn").addEventListener("click", () => {
+  grid.gridElement.classList.remove("frame");
+  document
+    .querySelector("#no-frame-btn")
+    .classList.toggle("frame-btn-selected");
+  document.querySelector("#frame-btn").classList.toggle("frame-btn-selected");
+  game.frame = false;
+});
+
+// Mute/unMute button management
 document.querySelector("#sound-on").addEventListener("click", () => {
   document.querySelectorAll("audio").forEach((track) => {
     track.muted = true;
@@ -352,7 +387,6 @@ document.querySelector("#sound-on").addEventListener("click", () => {
     document.querySelector("#sound-off").classList.remove("hidden");
   });
 });
-
 document.querySelector("#sound-off").addEventListener("click", () => {
   document.querySelectorAll("audio").forEach((track) => {
     track.muted = false;
