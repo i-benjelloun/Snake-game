@@ -22,12 +22,12 @@
       <div id="score" class="scores">Score : 0</div>
       <!-- <audio
         id="eat-sound"
-        src="mixkit-chewing-something-crunchy-2244.wav"
+        src="audios/mixkit-chewing-something-crunchy-2244.wav"
       ></audio> -->
       <audio
         id="background-music"
         loop="loop"
-        src="background-music.mp3"
+        src="audios/background-music.mp3"
       ></audio>
       <div id="sound-on" class="">
         <i class="fa-solid fa-volume-high"></i>
@@ -50,7 +50,7 @@
       </section>
       <section class="pop-up hidden" id="options-pop-up">
         <div class="frame-options">
-          <img id="left-arrow" src="left-arrow.png" alt="left-arrow" />
+          <img id="left-arrow" src="images/left-arrow.png" alt="left-arrow" />
           <h2>Frame</h2>
           <button class="fnf-buttons" id="frame-btn">Frame</button>
           <button class="fnf-buttons frame-btn-selected" id="no-frame-btn">
@@ -96,14 +96,19 @@
     <div id="mobile-cursor">
       <div></div>
       <div>
-        <img class="cursor" id="arrow-up" src="cursor-up.png" alt="cursor-up" />
+        <img
+          class="cursor"
+          id="cursor-up"
+          src="images/cursor-up.png"
+          alt="cursor-up"
+        />
       </div>
       <div></div>
       <div>
         <img
           class="cursor"
-          id="arrow-left"
-          src="cursor-left.png"
+          id="cursor-left"
+          src="images/cursor-left.png"
           alt="cursor-left"
         />
       </div>
@@ -111,8 +116,8 @@
       <div>
         <img
           class="cursor"
-          id="arrow-right"
-          src="cursor-right.png"
+          id="cursor-right"
+          src="images/cursor-right.png"
           alt="cursor-right"
         />
       </div>
@@ -120,13 +125,16 @@
       <div>
         <img
           class="cursor"
-          id="arrow-down"
-          src="cursor-down.png"
+          id="cursor-down"
+          src="images/cursor-down.png"
           alt="cursor-down"
         />
       </div>
       <div></div>
     </div>
-    <script src="script.js"></script>
+    <script src="food.js"></script>
+    <script src="snake.js"></script>
+    <script src="game.js"></script>
+    <script src="main.js"></script>
   </body>
 </html>
