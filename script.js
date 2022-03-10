@@ -19,7 +19,6 @@ let game = {
     snakeElements = [];
     snake.reset();
     this.resetScore();
-    this.writeScore();
     grid.reset();
     snake.createNew();
     snake.show();
@@ -39,9 +38,9 @@ let game = {
         snake.show();
         gameOver = game.checkGameOver();
         snake.checkFood();
+        food.show();
         game.writeScore();
         game.writeBestScore();
-        food.show();
       }
       if (!gameOver) window.requestAnimationFrame(main);
     }
@@ -125,15 +124,15 @@ let grid = {
 };
 
 let snake = {
-  initialPosition: Math.floor(Math.random() * (grid.width * grid.height)),
-  tailPosition: 0,
   headPosition: 0,
   direction: "",
   nextDirection: "",
 
   createNew: function () {
-    snakeElements.push(cells[this.initialPosition]);
-    this.tailPosition = cells.indexOf(snakeElements[0]);
+    const initialPosition = Math.floor(
+      Math.random() * (grid.width * grid.height)
+    );
+    snakeElements.push(cells[initialPosition]);
     this.headPosition = cells.indexOf(snakeElements[snakeElements.length - 1]);
   },
 
@@ -145,12 +144,28 @@ let snake = {
 
   // Add a snake element to the beginning of the snake
   grow: function () {
-    snakeElements.unshift(cells[this.tailPosition - 1]);
+    snakeElements.unshift(cells[cells.indexOf(snakeElements[0] - 1)]);
   },
 
-  update: function () {
+  updateSnakeElements: function () {
     snakeElements.shift();
     snakeElements.push(cells[this.headPosition]);
+  },
+
+  inTopRow: function () {
+    return Math.floor(this.headPosition / grid.width) === 0;
+  },
+
+  inBottomRow: function () {
+    return Math.floor(this.headPosition / grid.width) === grid.width - 1;
+  },
+
+  inRightColumn: function () {
+    return this.headPosition % grid.width === grid.width - 1;
+  },
+
+  inLeftColumn: function () {
+    return this.headPosition % grid.width === 0;
   },
 
   // Change current direction
@@ -169,60 +184,42 @@ let snake = {
     }
   },
 
-  moveHorizontal: function (border, increment, noFrameIncrement) {
-    if (this.headPosition % grid.width !== border) {
+  updateHeadPosition: function (border, increment, noFrameIncrement) {
+    if (!border) {
       this.headPosition += increment;
-      this.update();
+      this.updateSnakeElements();
     } else {
       if (game.frame) {
         this.collision = true;
       } else {
         this.headPosition += noFrameIncrement;
-        this.update();
-      }
-    }
-  },
-
-  moveVertical: function (row, increment, noFrameIncrement) {
-    if (Math.floor(this.headPosition / grid.width) !== row) {
-      this.headPosition += increment;
-      this.update();
-    } else {
-      if (game.frame) {
-        this.collision = true;
-      } else {
-        this.headPosition += noFrameIncrement;
-        this.update();
+        this.updateSnakeElements();
       }
     }
   },
 
   moveRight: function () {
-    const border = grid.width - 1;
     const increment = 1;
     const noFrameIncrement = 1 - grid.width;
-    this.moveHorizontal(border, increment, noFrameIncrement);
+    this.updateHeadPosition(this.inRightColumn(), increment, noFrameIncrement);
   },
 
   moveLeft: function () {
-    const border = 0;
     const increment = -1;
     const noFrameIncrement = grid.width - 1;
-    this.moveHorizontal(border, increment, noFrameIncrement);
+    this.updateHeadPosition(this.inLeftColumn(), increment, noFrameIncrement);
   },
 
   moveUp: function () {
-    const row = 0;
     const increment = -grid.width;
     const noFrameIncrement = grid.width * (grid.height - 1);
-    this.moveVertical(row, increment, noFrameIncrement);
+    this.updateHeadPosition(this.inTopRow(), increment, noFrameIncrement);
   },
 
   moveDown: function () {
-    const row = grid.width - 1;
     const increment = grid.width;
     const noFrameIncrement = -grid.width * (grid.height - 1);
-    this.moveVertical(row, increment, noFrameIncrement);
+    this.updateHeadPosition(this.inBottomRow(), increment, noFrameIncrement);
   },
 
   // Updating the head postion of the snake
