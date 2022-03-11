@@ -6,6 +6,7 @@ let game = {
 
   reset: function () {
     snakeElements = [];
+    game.setInitialSpeed();
     snake.reset();
     this.resetScore();
     grid.reset();
@@ -21,7 +22,6 @@ let game = {
       let gameOver;
       if (!start || timestamp - start >= game.speed) {
         start = timestamp;
-        game.setInitialSpeed();
         snake.changeDirection();
         snake.move();
         snake.show();
